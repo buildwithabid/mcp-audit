@@ -168,9 +168,9 @@ Full rationale and OWASP MCP Top 10 mapping is in [RULES.md](RULES.md).
 
 ## CI integration
 
-Drop [`.github/workflows/scan.yml`](.github/workflows/scan.yml) into your
-repo and edit one line — the `mcp-audit scan` invocation — to point at
-*your* server.
+Copy [`examples/github-actions-scan.yml`](examples/github-actions-scan.yml)
+into your repo as `.github/workflows/scan.yml` and edit one line — the
+`mcp-audit scan` invocation — to point at *your* server.
 
 The minimal job:
 

@@ -1,6 +1,11 @@
-# Drop this into `.github/workflows/scan.yml` in any repo that ships an MCP
-# server. It installs mcp-audit, then runs it against your server. The job
-# fails (and blocks merges) when mcp-audit finds a finding at severity >= high.
+# Copy this file to `.github/workflows/scan.yml` in any repo that ships an
+# MCP server. It installs mcp-audit, then runs it against your server. The
+# job fails (and blocks merges) when mcp-audit finds a finding at severity
+# >= high.
+#
+# Note: this template lives under `examples/` in the mcp-audit repo so it
+# does not auto-run there. Move it into your downstream repo's
+# `.github/workflows/` directory to activate it.
 #
 # Customize the `mcp-audit scan` line for your server:
 #   - stdio:  mcp-audit scan -- python -m your_package.server
