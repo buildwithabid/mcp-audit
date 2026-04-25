@@ -1,0 +1,42 @@
+# Drop this into `.github/workflows/scan.yml` in any repo that ships an MCP
+# server. It installs mcp-audit, then runs it against your server. The job
+# fails (and blocks merges) when mcp-audit finds a finding at severity >= high.
+#
+# Customize the `mcp-audit scan` line for your server:
+#   - stdio:  mcp-audit scan -- python -m your_package.server
+#   - http:   mcp-audit scan https://your-server.example/mcp
+#
+# To allow lower-severity findings, pass `--fail-on critical`. To emit a
+# machine-readable artifact, add `--json -o report.json` and upload it.
+
+name: MCP Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install mcp-audit
+        run: pip install mcp-audit
+
+      # Replace this with the command (or URL) for your own MCP server.
+      - name: Scan MCP server
+        run: |
+          mcp-audit scan --json -o mcp-audit-report.json -- \
+            python -m your_package.server
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcp-audit-report
+          path: mcp-audit-report.json
