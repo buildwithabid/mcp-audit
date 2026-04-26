@@ -1,18 +1,22 @@
 from __future__ import annotations
 
+import asyncio
 import shlex
 from typing import Any
 
 from mcp_audit.models import (
+    Evidence,
     Finding,
     PromptArgument,
     PromptInfo,
     ResourceInfo,
     ServerInfo,
+    Severity,
     Target,
     ToolInfo,
 )
 from mcp_audit.rules import all_rules
+from mcp_audit.rules.base import Rule
 
 
 def detect_target(value: str) -> Target:
@@ -70,9 +74,11 @@ async def fetch_server_info(
 async def _enumerate(session: Any, target: Target) -> ServerInfo:
     init_result = await session.initialize()
     metadata = _coerce_metadata(init_result)
-    tools = await _safe_list(session, "list_tools", "tools", _to_tool)
-    resources = await _safe_list(session, "list_resources", "resources", _to_resource)
-    prompts = await _safe_list(session, "list_prompts", "prompts", _to_prompt)
+    tools, resources, prompts = await asyncio.gather(
+        _safe_list(session, "list_tools", "tools", _to_tool),
+        _safe_list(session, "list_resources", "resources", _to_resource),
+        _safe_list(session, "list_prompts", "prompts", _to_prompt),
+    )
     return ServerInfo(
         target=target,
         tools=tools,
@@ -147,14 +153,22 @@ def run_rules(server_info: ServerInfo) -> list[Finding]:
         try:
             findings.extend(rule.check(server_info))
         except Exception as exc:
-            from mcp_audit.models import Evidence, Severity
-            findings.append(Finding(
-                rule_id=rule.id,
-                severity=Severity.INFO,
-                title=f"Rule `{rule.id}` failed to run",
-                description=f"The rule raised {type(exc).__name__}: {exc}",
-                evidence=Evidence(kind="server", name=server_info.target.value, field=None,
-                                  snippet=None, extra={"error": repr(exc)}),
-                remediation="This is a bug in mcp-audit. Please file an issue.",
-            ))
+            findings.append(_rule_failure_finding(rule, server_info, exc))
     return findings
+
+
+def _rule_failure_finding(rule: Rule, server_info: ServerInfo, exc: Exception) -> Finding:
+    return Finding(
+        rule_id=rule.id,
+        severity=Severity.INFO,
+        title=f"Rule `{rule.id}` failed to run",
+        description=f"The rule raised {type(exc).__name__}: {exc}",
+        evidence=Evidence(
+            kind="server",
+            name=server_info.target.value,
+            field=None,
+            snippet=None,
+            extra={"error": repr(exc)},
+        ),
+        remediation="This is a bug in mcp-audit. Please file an issue.",
+    )

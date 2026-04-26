@@ -97,7 +97,6 @@ def scan(
         target = detect_target(server[0])
         command, args = None, None
     else:
-        # Stdio: everything is the command, regardless of -- separator.
         command, args = parse_stdio_command(server)
         target = detect_target(" ".join(server))
 
@@ -139,12 +138,11 @@ def list_rules(
     """List all built-in rules."""
     rule_classes = all_rule_classes()
     if json_output:
-        import json as _json
         payload = [
             {"id": c.id, "title": c.title, "severity": c.severity.value, "description": c.description}
             for c in rule_classes
         ]
-        _stdout.print_json(_json.dumps(payload))
+        _stdout.print_json(data=payload)
         return
 
     if not rule_classes:

@@ -7,6 +7,13 @@ from pydantic import BaseModel, Field
 
 
 class Severity(str, Enum):
+    """Severity ranks INFO < LOW < MEDIUM < HIGH < CRITICAL.
+
+    All four ordering ops are defined explicitly because the `str` base
+    class supplies its own (lexicographic) comparisons that `functools.
+    total_ordering` won't overwrite.
+    """
+
     INFO = "info"
     LOW = "low"
     MEDIUM = "medium"
@@ -104,8 +111,8 @@ class Finding(BaseModel):
     remediation: str
 
 
-def severity_counts(findings: list[Finding]) -> dict[str, int]:
-    counts = {s.value: 0 for s in Severity}
+def severity_counts(findings: list[Finding]) -> dict[Severity, int]:
+    counts: dict[Severity, int] = {s: 0 for s in Severity}
     for f in findings:
-        counts[f.severity.value] += 1
+        counts[f.severity] += 1
     return counts

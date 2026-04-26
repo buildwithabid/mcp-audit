@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from mcp_audit.models import Evidence, Finding, ServerInfo, Severity
-from mcp_audit.rules.base import Rule
+from mcp_audit.rules.base import Rule, iter_string_properties
 
 
 class WeakValidationRule(Rule):
@@ -47,20 +47,20 @@ class WeakValidationRule(Rule):
 
 
 def _schema_issues(schema: dict):
-    if schema.get("type") == "object":
-        if schema.get("additionalProperties") not in (False,):
-            yield "permits-additional-properties", "permits additional properties (set additionalProperties: false)"
-        properties = schema.get("properties") or {}
-        required = set(schema.get("required") or [])
-        if isinstance(properties, dict) and properties and not required:
-            yield "no-required-fields", "declares properties but no `required` list"
-        if isinstance(properties, dict):
-            for name, prop in properties.items():
-                if not isinstance(prop, dict):
-                    continue
-                if prop.get("type") == "string":
-                    if not any(k in prop for k in ("maxLength", "pattern", "enum", "format")):
-                        yield (
-                            f"unconstrained-string:{name}",
-                            f"property `{name}` is an unconstrained string (no maxLength/pattern/enum/format)",
-                        )
+    if schema.get("type") != "object":
+        return
+    if schema.get("additionalProperties") is not False:
+        yield "permits-additional-properties", "permits additional properties (set additionalProperties: false)"
+    properties = schema.get("properties") or {}
+    required = set(schema.get("required") or [])
+    if isinstance(properties, dict) and properties and not required:
+        yield "no-required-fields", "declares properties but no `required` list"
+    for name, prop in iter_string_properties(schema):
+        if prop.get("type") != "string":
+            continue
+        if any(k in prop for k in ("maxLength", "pattern", "enum", "format")):
+            continue
+        yield (
+            f"unconstrained-string:{name}",
+            f"property `{name}` is an unconstrained string (no maxLength/pattern/enum/format)",
+        )

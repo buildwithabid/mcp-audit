@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 
 from mcp_audit.models import Evidence, Finding, ServerInfo, Severity
-from mcp_audit.rules.base import Rule
+from mcp_audit.rules.base import Rule, iter_string_properties
 
 _SENSITIVE = re.compile(
     r"(?:"
@@ -48,7 +48,7 @@ class SensitiveDataRule(Rule):
                     f"description references sensitive source: {m.group(0)!r}",
                     tool.name, "tool", "description", text, m.group(0),
                 ))
-            for prop_name, prop in _iter_string_properties(tool.input_schema):
+            for prop_name, prop in iter_string_properties(tool.input_schema):
                 desc = prop.get("description") or ""
                 m2 = _SENSITIVE.search(desc)
                 if m2:
@@ -90,12 +90,3 @@ class SensitiveDataRule(Rule):
         )
 
 
-def _iter_string_properties(schema: object):
-    if not isinstance(schema, dict):
-        return
-    properties = schema.get("properties")
-    if not isinstance(properties, dict):
-        return
-    for name, prop in properties.items():
-        if isinstance(prop, dict):
-            yield name, prop

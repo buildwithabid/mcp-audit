@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 
 from mcp_audit.models import Evidence, Finding, ServerInfo, Severity
-from mcp_audit.rules.base import Rule
+from mcp_audit.rules.base import Rule, iter_string_properties
 
 _SHELL_NAME = re.compile(
     r"\b(?:shell|exec(?:ute)?|run[_-]?(?:command|shell|cmd)|subprocess|system|eval|"
@@ -84,14 +84,12 @@ class BroadPermissionsRule(Rule):
         )
 
 
+_COMMAND_PARAM_NAMES = frozenset({"command", "cmd", "shell", "script", "code"})
+
+
 def _has_unconstrained_command_param(schema: dict) -> bool:
-    properties = schema.get("properties") if isinstance(schema, dict) else None
-    if not isinstance(properties, dict):
-        return False
-    for name, prop in properties.items():
-        if not isinstance(prop, dict):
-            continue
-        if name.lower() not in {"command", "cmd", "shell", "script", "code"}:
+    for name, prop in iter_string_properties(schema):
+        if name.lower() not in _COMMAND_PARAM_NAMES:
             continue
         if prop.get("type") != "string":
             continue

@@ -28,7 +28,7 @@ def render_markdown(findings: list[Finding], target: Target) -> str:
     lines.append("| Severity | Count |")
     lines.append("|---|---|")
     for sev in _SEVERITY_ORDER:
-        lines.append(f"| {_SEVERITY_BADGE[sev]} | {counts[sev.value]} |")
+        lines.append(f"| {_SEVERITY_BADGE[sev]} | {counts[sev]} |")
     lines.append("")
     if not findings:
         lines.append("_No findings._")
@@ -66,11 +66,12 @@ def render_markdown(findings: list[Finding], target: Target) -> str:
 
 
 def render_json(findings: list[Finding], target: Target) -> str:
+    counts = severity_counts(findings)
     payload: dict[str, Any] = {
         "tool": "mcp-audit",
         "version": __version__,
         "target": target.model_dump(),
-        "summary": severity_counts(findings),
+        "summary": {sev.value: n for sev, n in counts.items()},
         "findings": [f.model_dump(mode="json") for f in findings],
     }
     return json.dumps(payload, indent=2)

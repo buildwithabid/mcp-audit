@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Iterable
 
 from mcp_audit.models import Evidence, Finding, ServerInfo, Severity
-from mcp_audit.rules.base import Rule
+from mcp_audit.rules.base import Rule, iter_string_properties
 
 
 @dataclass(frozen=True)
@@ -91,16 +91,11 @@ class PromptInjectionRule(Rule):
         return out
 
     def _scan_param_schema(self, schema: dict, tool_name: str) -> Iterable[Finding]:
-        if not isinstance(schema, dict):
-            return
-        properties = schema.get("properties") or {}
-        if not isinstance(properties, dict):
-            return
-        for prop_name, prop in properties.items():
-            if not isinstance(prop, dict):
-                continue
+        for prop_name, prop in iter_string_properties(schema):
             desc = prop.get("description") or ""
-            yield from self._scan_text(desc, "tool", tool_name, f"inputSchema.properties.{prop_name}.description")
+            yield from self._scan_text(
+                desc, "tool", tool_name, f"inputSchema.properties.{prop_name}.description"
+            )
 
     def _scan_text(
         self, text: str, kind: str, name: str, field: str
