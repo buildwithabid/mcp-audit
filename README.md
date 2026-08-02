@@ -68,14 +68,12 @@ you can `pip install` and run a command, you can scan an MCP server.
 
 ## Install
 
-```bash
-pip install mcp-audit
-```
-
-Or with [pipx](https://pipx.pypa.io/) for an isolated CLI install:
+> **Not published to a registry yet.** Install from source with the steps below; the commands in this README assume you have done so.
 
 ```bash
-pipx install mcp-audit
+git clone https://github.com/BuildWithAbid/mcp-audit.git
+cd mcp-audit
+pip install -e .    # provides the `mcp-audit` command
 ```
 
 Or from source:
@@ -231,7 +229,7 @@ into your repo as `.github/workflows/scan.yml` and edit one line — the
 The minimal job:
 
 ```yaml
-- run: pip install mcp-audit
+- run: pip install git+https://github.com/BuildWithAbid/mcp-audit.git
 - run: mcp-audit scan --json -o mcp-audit-report.json -- python -m your_pkg.server
 - if: always()
   uses: actions/upload-artifact@v4
