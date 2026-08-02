@@ -251,7 +251,7 @@ matches your stack and threat model:
 
 | Scanner | Language / Install | Connects to a live server? | Niche |
 |---|---|---|---|
-| **mcp-audit** (this) | Python · `pip install mcp-audit` | Yes (stdio + HTTP) | Python-native, small, easy to extend |
+| **mcp-audit** (this) | Python · install from source | Yes (stdio + HTTP) | Python-native, small, easy to extend |
 | [mcp-shield](https://github.com/BuildWithAbid/mcp-shield) | TypeScript · `npm i -g @buildwithabid/mcp-shield` | Yes | Node-native, also runs as an MCP server itself |
 | [Snyk Agent Scan / mcp-scan](https://github.com/snyk/agent-scan) | Multi-language | Yes | Commercial backing, broad rule set |
 | [Cisco mcp-scanner](https://github.com/cisco-ai-defense/mcp-scanner) | Mixed | Yes | Yara + LLM-judge engines |
@@ -259,7 +259,7 @@ matches your stack and threat model:
 
 `mcp-audit`'s sweet spot:
 
-- You're already running tests in pytest and want one more `pip install`.
+- You're already running tests in pytest and want one more Python tool.
 - You want a small, readable, MIT codebase you can fork and add a rule to.
 - You want CI exit codes and JSON output, not a hosted dashboard.
 
