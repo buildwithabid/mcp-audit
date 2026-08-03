@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Security scanner for Model Context Protocol (MCP) servers — find prompt injection, over-broad permissions, weak input validation, and credential leaks before your agent does."
 readme = "README.md"
 license = { text = "MIT" }
-authors = [{ name = "Abid Ali", email = "ceo@exsporta.com" }]
+authors = [{ name = "Abid Ali" }]
 requires-python = ">=3.11"
 keywords = [
     "mcp",
