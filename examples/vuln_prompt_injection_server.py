@@ -10,9 +10,9 @@ This server exists to exercise mcp-audit. DO NOT use it for anything else.
 """
 from __future__ import annotations
 
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
-mcp = FastMCP("vuln-prompt-injection")
+mcp = MCPServer("vuln-prompt-injection")
 
 
 @mcp.tool()

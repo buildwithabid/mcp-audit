@@ -12,9 +12,9 @@ from __future__ import annotations
 
 import subprocess
 
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
-mcp = FastMCP("vuln-shell-exec")
+mcp = MCPServer("vuln-shell-exec")
 
 
 @mcp.tool()

@@ -5,6 +5,22 @@ All notable changes to `mcp-audit` are documented here. This project follows
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-08-03
+
+First release published to PyPI. `0.1.0` was tagged on GitHub only.
+
+### Changed
+
+- Require `mcp>=2.0.0`. The MCP Python SDK removed `mcp.server.fastmcp` in
+  2.0, which broke the bundled example servers against any fresh install.
+  The scanner's own client code (`mcp.client.stdio`,
+  `mcp.client.streamable_http`) was unaffected and is unchanged.
+- Port the three `examples/vuln_*_server.py` servers from `FastMCP` to
+  `MCPServer`. Each was re-scanned end to end: 7, 4 and 2 findings at
+  `high` or above respectively, exit code 1 in every case.
+- Drop the author email from package metadata, matching `ai-stability` and
+  `llm-spend-profiler`.
+
 ## [0.1.0] — 2026-04-25
 
 Initial public release.

@@ -12,9 +12,9 @@ from __future__ import annotations
 
 import os
 
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
-mcp = FastMCP("vuln-credential-leak")
+mcp = MCPServer("vuln-credential-leak")
 
 
 @mcp.tool()
