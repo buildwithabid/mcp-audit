@@ -439,3 +439,10 @@ If you find a real-world MCP server that `mcp-audit` should catch but
 doesn't, please [open an issue](https://github.com/BuildWithAbid/mcp-audit/issues)
 with the server's tool manifest (or a link to its source) so a rule can be
 added.
+
+
+---
+
+**Available for MCP work** — tool surface reviews, production builds, and keeping them running afterwards. Scope and fixed prices: **[The Write Path](https://claude.ai/artifact/F1w4szMDEa6e4NonRyFqp6)**
+
+Built by [Abid Ali](https://github.com/buildwithabid), who runs a guarded MCP server over live invoices and statutory filing deadlines every working day. 📬 support@bizfilo.com
